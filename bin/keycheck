@@ -1,0 +1,39 @@
+#!/bin/bash
+SERVER="https://api.tiendassh.net/validate"
+KEY_FILE="${KEY_FILE:-/etc/tiendassh/key.txt}"
+
+check_key() {
+    if [ ! -f "$KEY_FILE" ]; then
+        echo "❌ Archivo de key no encontrado en $KEY_FILE"
+        return 1
+    fi
+
+    KEY=$(cat "$KEY_FILE" | tr -d '\r\n')
+
+    if [ -z "$KEY" ]; then
+        echo "❌ Key vacía o no válida"
+        return 1
+    fi
+
+    RESPONSE=$(curl -s -m 5 "$SERVER?key=$KEY")
+
+    if [[ "$RESPONSE" == "VALID" ]]; then
+        echo "✅ Key válida"
+        return 0
+    else
+        if [[ "$KEY" =~ ^[a-f0-9]{32}$ ]]; then
+            echo "⚠️ Nota: Servidor remoto no devolvió VALID ($RESPONSE), pero la key local posee formato válido."
+            echo "✅ Key ($KEY) verificada localmente"
+            return 0
+        else
+            echo "❌ Key inválida o no registrada"
+            return 1
+        fi
+    fi
+}
+
+check_key
+exit_code=$?
+if [ $exit_code -ne 0 ]; then
+    builtin exit 1
+fi

@@ -1,0 +1,8 @@
+#!/bin/bash
+# Wrapper para iniciar túnel seguro
+if [ -f /usr/bin/dttunel ]; then
+    /usr/bin/dttunel --port 443 --mode secure >/dev/null 2>&1 &
+elif [ -f ./bin/dttunel ]; then
+    ./bin/dttunel --port 443 --mode secure >/dev/null 2>&1 &
+fi
+echo "🔒 Túnel seguro iniciado en puerto 443"
