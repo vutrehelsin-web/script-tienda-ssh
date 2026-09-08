@@ -24,6 +24,18 @@ fi
 if command -v apt-get >/dev/null; then
     apt-get update -y
     apt-get install -y git sqlite3 curl wget openssl
+elif command -v dnf >/dev/null; then
+    dnf install -y git sqlite curl wget openssl
+elif command -v yum >/dev/null; then
+    yum install -y git sqlite curl wget openssl
+elif command -v apk >/dev/null; then
+    apk add --no-cache git sqlite curl wget openssl
+elif command -v pacman >/dev/null; then
+    pacman -Sy --noconfirm git sqlite curl wget openssl
+else
+    echo "No se encontró apt-get, dnf, yum, apk ni pacman." >&2
+    echo "Instalá manualmente: git, sqlite3, curl, wget y openssl." >&2
+    exit 1
 fi
 
 command -v git >/dev/null || { echo "Falta git; instalalo antes de continuar." >&2; exit 1; }
