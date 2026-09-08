@@ -54,6 +54,11 @@ cp -r "$tmp_dir/repository/bin/." "$INSTALL_ROOT/bin/" 2>/dev/null || true
 printf '%s\n' "$KEY" > "$INSTALL_ROOT/key.txt"
 chmod 600 "$INSTALL_ROOT/key.txt"
 chmod +x "$INSTALL_ROOT/modules/"*.sh 2>/dev/null || true
+if [[ -f "$INSTALL_ROOT/bin/menu" ]]; then
+    chmod +x "$INSTALL_ROOT/bin/menu"
+    ln -sf "$INSTALL_ROOT/bin/menu" /usr/local/bin/menu
+fi
 
 echo "TiendaSSH instalado correctamente."
 echo "Key: $KEY"
+echo "Panel: menu"
