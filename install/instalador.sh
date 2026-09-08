@@ -21,8 +21,13 @@ if [[ "${EUID}" -ne 0 ]]; then
     exit 1
 fi
 
-command -v git >/dev/null || { echo "Falta git." >&2; exit 1; }
-command -v sqlite3 >/dev/null || { echo "Falta sqlite3." >&2; exit 1; }
+if command -v apt-get >/dev/null; then
+    apt-get update -y
+    apt-get install -y git sqlite3 curl wget openssl
+fi
+
+command -v git >/dev/null || { echo "Falta git; instalalo antes de continuar." >&2; exit 1; }
+command -v sqlite3 >/dev/null || { echo "Falta sqlite3; instalalo antes de continuar." >&2; exit 1; }
 
 tmp_dir="$(mktemp -d)"
 cleanup() { rm -rf "$tmp_dir"; }
