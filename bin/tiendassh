@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+INSTALL_ROOT="${TIENDASSH_ROOT:-/etc/tiendassh}"
+REPO_DIR="${TIENDASSH_REPO:-/root/script-tienda-ssh}"
+
+case "${1:-help}" in
+    update)
+        [[ -d "$REPO_DIR/.git" ]] || { echo "No se encontró el repositorio en $REPO_DIR." >&2; exit 1; }
+        git -C "$REPO_DIR" checkout main
+        git -C "$REPO_DIR" pull --ff-only origin main
+        mkdir -p "$INSTALL_ROOT"/{bin,modules,assets}
+        cp -r "$REPO_DIR/bin/." "$INSTALL_ROOT/bin/"
+        cp -r "$REPO_DIR/modules/." "$INSTALL_ROOT/modules/"
+        cp -r "$REPO_DIR/assets/." "$INSTALL_ROOT/assets/" 2>/dev/null || true
+        chmod +x "$INSTALL_ROOT/bin/"* "$INSTALL_ROOT/modules/"*.sh 2>/dev/null || true
+        echo "TiendaSSH actualizado correctamente."
+        ;;
+    menu)
+        exec "$INSTALL_ROOT/bin/menu"
+        ;;
+    help|*)
+        echo "Uso: tiendassh {update|menu}"
+        exit 0
+        ;;
+esac

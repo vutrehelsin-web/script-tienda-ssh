@@ -2,36 +2,20 @@
 source /etc/tiendassh/assets/theme.conf 2>/dev/null || source ./assets/theme.conf 2>/dev/null
 
 BASE_DIR="/etc/tiendassh"
-if [ ! -d "$BASE_DIR" ]; then
-    BASE_DIR="."
-fi
-
-# Validar key al iniciar
-if [ -f "$BASE_DIR/bin/keycheck" ]; then
-    bash "$BASE_DIR/bin/keycheck" >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-        echo -e "${RED}❌ Key no autorizada o ausente. Ejecute el instalador de TiendaSSH.${NC}"
-        builtin exit 1
-    fi
-fi
+if [ ! -d "$BASE_DIR" ]; then BASE_DIR="."; fi
 
 while true; do
     clear
     if [ -f "$BASE_DIR/assets/logo.txt" ]; then
-        echo -e "${NEON_BLUE}"
-        cat "$BASE_DIR/assets/logo.txt"
-        echo -e "${NC}"
+        echo -e "${NEON_BLUE}"; cat "$BASE_DIR/assets/logo.txt"; echo -e "${NC}"
     else
         echo -e "${NEON_BLUE}==========================================${NC}"
         echo -e "${NEON_GREEN}            ⚡ TIENDASSH ⚡${NC}"
         echo -e "${NEON_BLUE}==========================================${NC}"
     fi
-
-    # Información de sistema
     ip_pub=$(curl -s -m 2 ifconfig.me 2>/dev/null || echo "127.0.0.1")
     key_val=$(cat /etc/tiendassh/key.txt 2>/dev/null || echo "N/A")
     mem_used=$(free -m 2>/dev/null | awk '/Mem:/ {print $3"MB / "$2"MB"}')
-
     echo -e "${WHITE}IP pública:${NC} ${NEON_YELLOW}$ip_pub${NC} | ${WHITE}RAM:${NC} ${NEON_GREEN}$mem_used${NC}"
     echo -e "${WHITE}KEY actual:${NC} ${NEON_PINK}$key_val${NC}"
     echo -e "${NEON_BLUE}====================================================================${NC}"
@@ -43,15 +27,14 @@ while true; do
     echo -e "${WHITE}[6]${NC} 🔄 Actualizar TiendaSSH"
     echo -e "${WHITE}[0]${NC} ❌ Salir"
     echo -e "${NEON_BLUE}====================================================================${NC}"
-    read -p "Selecciona una opción: " opt
-
+    read -r -p "Selecciona una opción: " opt
     case $opt in
         1) bash "$BASE_DIR/modules/users.sh" ;;
         2) bash "$BASE_DIR/modules/protocols.sh" ;;
-        3) bash "$BASE_DIR/bin/dtunel" ; read -p "Presiona Enter..." ;;
+        3) bash "$BASE_DIR/bin/dtunel"; read -r -p "Presiona Enter..." ;;
         4) bash "$BASE_DIR/modules/bots.sh" ;;
         5) bash "$BASE_DIR/modules/system.sh" ;;
-        6) bash "$BASE_DIR/modules/updater.sh" ;;
+        6) tiendassh update; read -r -p "Presiona Enter..." ;;
         0) echo -e "${NEON_GREEN}¡Gracias por usar TiendaSSH!${NC}"; break ;;
         *) echo -e "${RED}❌ Opción inválida${NC}"; sleep 1 ;;
     esac
