@@ -9,7 +9,7 @@ PLAN="${3:-30}"
 DATE="$(date '+%Y-%m-%d %H:%M:%S')"
 KEY="$(openssl rand -hex 16)"
 
-esscape_sql() {
+escape_sql() {
     printf '%s' "$1" | sed "s/'/''/g"
 }
 
